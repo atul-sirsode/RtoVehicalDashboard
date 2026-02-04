@@ -1,4 +1,4 @@
-﻿[build]
+[build]
 command = "npm run build"
 publish = "dist"
 
@@ -11,11 +11,11 @@ to = "/.netlify/functions/auth"
 status = 200
 
 [[redirects]]
-from = "/api/rc/rc_verify"
-to = "/.netlify/functions/rc"
+from = "/api/auth/verify_otp"
+to = "/.netlify/functions/verify-otp"
 status = 200
 
 [[redirects]]
-from = "/api/auth/verify_otp"
-to = "/.netlify/functions/verify-otp"
+from = "/api/rc/rc_verify"
+to = "/.netlify/functions/rc"
 status = 200
