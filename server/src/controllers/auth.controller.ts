@@ -1,11 +1,93 @@
 ﻿import { Request, Response, NextFunction } from "express"
-import { proxyRequest } from "../services/proxy.service"
-import { env } from "../config/env"
+import { proxyRequest } from "../services/proxy.service.js"
+import { env } from "../config/env.js"
 
 import {
     LoginDetails,
     LoginOTPResponse, VerifyOtp, VerifyOTPResponse
-} from "../types/auth.types"
+} from "../types/auth.types.js"
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LoginDetails:
+ *       type: object
+ *       required:
+ *         - username
+ *         - password
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: Username for login
+ *           example: "user123"
+ *         password:
+ *           type: string
+ *           description: Password for login
+ *           example: "password123"
+ *     LoginOTPResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *         message:
+ *           type: string
+ *         session_id:
+ *           type: string
+ *     VerifyOtp:
+ *       type: object
+ *       required:
+ *         - username
+ *         - password
+ *         - otp
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: Username for verification
+ *           example: "user123"
+ *         password:
+ *           type: string
+ *           description: Password for verification
+ *           example: "password123"
+ *         otp:
+ *           type: string
+ *           description: One-time password
+ *           example: "123456"
+ *     VerifyOTPResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *         message:
+ *           type: string
+ *         token:
+ *           type: string
+ */
+
+/**
+ * @swagger
+ * /api/auth/login_otp:
+ *   post:
+ *     summary: Send login OTP to mobile number
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginDetails'
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginOTPResponse'
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
 
 export async function login(
     req: Request<{}, {}, LoginDetails>,
@@ -34,6 +116,33 @@ export async function login(
 }
 
 
+
+/**
+ * @swagger
+ * /api/auth/login_verify_otp:
+ *   post:
+ *     summary: Verify login OTP and get authentication token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VerifyOtp'
+ *     responses:
+ *       200:
+ *         description: OTP verified successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VerifyOTPResponse'
+ *       400:
+ *         description: Invalid OTP or bad request
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 
 export async function VerifyLogin(
     req: Request<{}, {}, VerifyOtp>,

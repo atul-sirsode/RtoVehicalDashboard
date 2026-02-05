@@ -1,15 +1,88 @@
 ﻿import { Request, Response, NextFunction } from "express"
-import { proxyRequest } from "../services/proxy.service"
-import { env } from "../config/env"
+import { proxyRequest } from "../services/proxy.service.js"
+import { env } from "../config/env.js"
 import {
     RcDetails,
-    RCApiResponse
-} from "../types/auth.types"
+    RCApiResponse,
+    ApiErrorResponse
+} from "../types/auth.types.js"
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     RcDetails:
+ *       type: object
+ *       required:
+ *         - id_number
+ *       properties:
+ *         id_number:
+ *           type: string
+ *           description: RTO vehicle registration number
+ *           example: "MH12AB1234"
+ *     RCApiResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *         message:
+ *           type: string
+ *         data:
+ *           type: object
+ *           description: Vehicle details
+ *     ApiErrorResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *           example: "Missing Authorization header"
+ *         statuscode:
+ *           type: integer
+ *           example: 401
+ */
+
+/**
+ * @swagger
+ * /api/rc/rc_verify:
+ *   post:
+ *     summary: Get vehicle RC details by registration number
+ *     tags: [RC Verification]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RcDetails'
+ *     responses:
+ *       200:
+ *         description: RC details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/RCApiResponse'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Missing or invalid authorization token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiErrorResponse'
+ *       404:
+ *         description: Vehicle not found
+ *       500:
+ *         description: Internal server error
+ */
 
 
 export async function fetchRC(
     req: Request<{}, {}, RcDetails>,
-    res: Response<RCApiResponse>,
+    res: Response<RCApiResponse | ApiErrorResponse>,
     next: NextFunction
 ) {
     try {
@@ -17,11 +90,12 @@ export async function fetchRC(
         const authHeader = req.headers.authorization
 
         if (!authHeader) {
-            return res.status(401).json({
+            const errorResponse: ApiErrorResponse = {
                 status: false,
                 message: "Missing Authorization header",
                 statuscode: 401
-            } as any)
+            }
+            return res.status(401).json(errorResponse)
         }
 
         const requestHeaders = {
