@@ -3,7 +3,7 @@ command = "npm ci && npm run build"
 publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20.19.0"
 
 [functions]
 directory = "netlify/functions"
@@ -29,3 +29,4 @@ status = 200
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
