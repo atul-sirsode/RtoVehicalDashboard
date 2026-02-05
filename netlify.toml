@@ -1,6 +1,6 @@
 [build]
 base = "."
-command = "npm ci && npm run build"
+command = "npm install && npm run build"
 publish = "dist"
 functions = "netlify/functions"
 
@@ -31,4 +31,5 @@ status = 200
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
 
